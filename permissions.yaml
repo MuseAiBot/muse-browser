@@ -1,0 +1,7 @@
+# Per-profile permission policy for muse-browser.
+# auto_approve lists action classes that skip the proposal queue.
+# Account creation is NEVER allowed, regardless of this file.
+default:
+  auto_approve: [text, a11y, screenshot, history.query]
+  require_approval: [navigate, click, type, evaluate, submit]
+  hard_deny: [account_creation]

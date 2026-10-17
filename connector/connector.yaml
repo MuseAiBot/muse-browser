@@ -1,0 +1,23 @@
+name: muse-browser
+display_name: Muse Browser
+description: Persistent, permission-gated browser for AI agents.
+version: 0.1.0
+base_url_env: MUSE_BROWSER_URL
+auth:
+  type: bearer
+  token_env: MUSE_BROWSER_TOKEN
+operations:
+  - status
+  - session.create
+  - session.list
+  - session.close
+  - navigate
+  - click
+  - type
+  - text
+  - a11y
+  - screenshot
+  - evaluate
+  - history.query
+  - history.replay
+  - profiles.list

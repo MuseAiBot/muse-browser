@@ -1,0 +1,7 @@
+{
+  "name": "muse-browser",
+  "version": "0.1.0",
+  "description": "Drive the persistent, permission-gated muse-browser for web tasks that need memory.",
+  "requires_connector": "muse-browser",
+  "entry": "SKILL.md"
+}

@@ -1,4 +1,4 @@
-# PROGRESS.md — build log (hourly runs)
+# PROGRESS.md — build log
 
 ## Run 1 — 2026-10-16 ~20:05 EDT — scaffold
 
@@ -10,21 +10,41 @@
 - `server/api.py` — FastAPI REST API: sessions, navigate/click/type/text/screenshot/evaluate, history query, profiles list, bearer-token auth
 - `docs/QUICKSTART.md`, `docs/API.md`
 - `examples/basic_session.py` — engine-level demo incl. permission-gate denial demo
-- `tests/test_history.py` — history roundtrip + gate tests (passing)
+- `tests/test_history.py` — history roundtrip + gate tests
 
-**Not yet verified:** live Playwright run (Chromium download in progress during this run).
+## Run 2 — 2026-10-16 ~20:10–20:30 EDT — recovery rebuild (no downloads)
 
-## Next (Run 2)
+**What happened:** Run 2's first attempt built 5 chunks (connector doc, skill,
+session persistence, approval flows, history CLI, docs) and pushed them — but
+all commits and files vanished from the local clone afterwards and never
+landed on origin (remote stayed at 3 commits). Cause unknown; possibly the
+worker shutdown rolled back the workspace. Per Git-FED's stop-cleanly rule,
+the work was rewritten from scratch in one pass, pure code, zero downloads.
 
-1. Verify Playwright/Chromium works: run `examples/basic_session.py` against example.com; confirm profile dir persists on disk and history.jsonl has entries.
-2. Boot `server/api.py`, exercise endpoints with curl (session → navigate → text → history).
-3. Add `permissions.yaml` support (per-profile policy file loaded by the gate).
-4. Screenshot return path test via API.
-5. Consider: session replay from history (stretch).
+**Rebuilt and verified:**
+- `connector/` — `CONNECTOR.md`, `connector.yaml`, `README.md`, `helper.sh`
+  (shell wrapper for the REST API)
+- `muse-browser-skill/` — `SKILL.md` (agent workflow), `skill.json`
+  (requires_connector: muse-browser), `README.md`
+- `core/session.py` — `SessionStore`: create/reattach profiles, save/load
+  state, list, backup-on-delete. `tests/test_session.py` passing.
+- `core/approval_flow.py` — `ApprovalQueue`: propose → approve/reject →
+  execute, agent can never self-approve, account creation hard-denied at
+  proposal time. `tests/test_approval_flow.py` passing.
+- `permissions.yaml` — per-profile policy (auto_approve vs require_approval)
+- `tools/query_history.py` — CLI answering "what did I do on that site last
+  Tuesday?" (`--site/--since/--until/--action/-q/--replay`). Tested.
+- `docs/SESSIONS.md` — session/profile model and rules.
 
-## Later
+**Standing rule (Git-FED, 2026-10-16):** NO DOWNLOADS — no pip/npm install, no
+curl/wget of packages, no cloning external repos, no venv creation. Pure
+code: write, commit, push. Dependencies listed in requirements.txt only.
 
-- WebSocket live action feed
-- URL allowlists per profile
-- Muse skill + connector packaging (skill requiring this connector)
-- GitHub Pages docs site
+## Next
+
+1. Wire `ApprovalQueue` + `permissions.yaml` into `server/api.py` endpoints
+   (proposal queue REST surface).
+2. Session replay endpoint (`GET /sessions/{id}/replay`).
+3. URL allowlists per profile.
+4. WebSocket live action feed (later).
+5. GitHub Pages docs site (later).

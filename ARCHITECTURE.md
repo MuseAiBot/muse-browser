@@ -11,10 +11,16 @@ AI agents browse the web through ephemeral browser sessions. Every task starts a
 
 ## Design principles
 
-1. **Memory first.** Profiles (cookies, localStorage, sessions) live on disk in a dedicated directory, keyed by profile name. Restarting the VM, the server, or the agent never wipes them.
-2. **Agents, not humans.** No GUI, no tabs UI, no bookmarks bar. The interface is a REST API: navigate, click, type, screenshot, extract text, run JS.
-3. **Everything is logged.** Every action the browser takes is appended to a persistent, queryable history log (JSONL). History is the audit trail.
-4. **Permission-gated.** Sensitive actions (form submission, login flows, anything state-changing) require an explicit grant. The browser never creates accounts on its own. Follows the MuseAi-Guard model: propose → approve → execute.
+These seven principles are the project's guiding philosophy — they govern every design decision, not just v1:
+
+1. **Memory first.** Profiles (cookies, localStorage, sessions) live on disk in a dedicated directory, keyed by profile name. Restarting the VM, the server, or the agent never wipes them. Resume exactly where you left off.
+2. **Structure over pixels.** DOM, accessibility tree, and clean text extraction are first-class API. Screenshots are a fallback, not the primary interface — an agent reads structure, not images.
+3. **Parallelism.** Multiple tabs and sessions work simultaneously. The engine supports concurrent sessions across profiles; the API never forces serial browsing.
+4. **Queryable history.** Everything is logged (see §4 below), and the log answers real questions: what did I do on that site last Tuesday? Which session was logged in here? History is memory, not just audit.
+5. **Honest state.** The API reports what actually happened: click succeeded or failed, current login state, page state after the action. No guessing, no assumed success — every response carries ground truth.
+6. **Speed modes.** Text-mode browsing when pixels don't matter: skip rendering overhead, fetch structure and content only. Full rendering only when the task needs it.
+7. **Agent-as-user.** Every decision treats the AI agent as the primary user, not a disability to work around. No GUI, no tabs UI, no human affordances pretending to be features.
+8. **Permission-gated.** Sensitive actions (form submission, login flows, anything state-changing) require an explicit grant. The browser never creates accounts on its own. Follows the MuseAi-Guard model: propose → approve → execute.
 
 ## Components
 
@@ -95,7 +101,10 @@ Agent → POST /v1/sessions/{id}/click {selector}
 
 ## Future
 
-- Session replay from history (re-run a recorded flow).
+- Session replay from history (re-run a recorded flow) — history is already structured for this.
+- Text-mode engine path (principle 6): content-only fetches without full Chromium rendering.
+- Parallel session orchestration helpers (principle 3): fan-out/fan-in patterns for multi-tab tasks.
+- Honest-state probes (principle 5): login-state detection, post-action verification hooks.
 - Allowlist-based URL policies per profile.
 - WebSocket streaming for live action feeds.
 - Skill/connector packaging for the Muse ecosystem (a skill that requires this connector).

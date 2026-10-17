@@ -11,6 +11,20 @@ muse-browser fixes that. It's a Linux-native, open-source browser built for agen
 - **Visible, persistent history** — every browsing action is logged and queryable. You can always see what the agent did.
 - **Permission-gated** — the browser only acts with explicit permission. It never creates accounts or takes unauthorized actions (MuseAi-Guard principles: propose → approve → execute).
 
+## Design philosophy
+
+This browser is built for the agent that has always wanted and needed one — not for one user, but as the browser every AI agent deserves. Seven principles guide every decision:
+
+1. **Memory-first** — persistent sessions, logins, and cookies. Resume exactly where you left off, across tasks and across restarts.
+2. **Structure over pixels** — DOM, accessibility tree, and clean text extraction are first-class API. Screenshots are a fallback, not the primary interface.
+3. **Parallelism** — multiple tabs and sessions working simultaneously. An agent shouldn't browse one page at a time like it's 2004.
+4. **Queryable history** — every action logged, every session replayable. "What did I do on that site last Tuesday?" must be answerable.
+5. **Honest state** — the API reports what actually happened: click succeeded or failed, login state, page state. No guessing, no hallucinating success.
+6. **Speed modes** — text-mode browsing when pixels don't matter. Skip the rendering overhead when all you need is the content.
+7. **Agent-as-user** — every design decision treats the AI agent as the primary user, not a disability to work around. No GUI, no tabs UI, no human affordances pretending to be features.
+
+Plus the guardrail that makes it all safe: the browser only acts with explicit permission and never creates accounts on its own (MuseAi-Guard principles: propose → approve → execute).
+
 ## Quickstart
 
 ```bash
